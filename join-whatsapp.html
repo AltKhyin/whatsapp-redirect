@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Joining WhatsApp Group...</title>
+      <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              min-height: 100vh;
+              background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+              color: white;
+              text-align: center;
+              padding: 20px;
+          }
+          .spinner {
+              width: 60px;
+              height: 60px;
+              border: 5px solid rgba(255, 255, 255, 0.3);
+              border-top-color: white;
+              border-radius: 50%;
+              animation: spin 1s linear infinite;
+              margin: 0 auto 30px;
+          }
+          @keyframes spin {
+              to { transform: rotate(360deg); }
+          }
+          h1 { font-size: 24px; margin-bottom: 15px; }
+          p { font-size: 16px; opacity: 0.9; }
+          .fallback-link {
+              display: none;
+              margin-top: 30px;
+              padding: 15px 30px;
+              background: white;
+              color: #128C7E;
+              text-decoration: none;
+              border-radius: 8px;
+              font-weight: 600;
+              font-size: 16px;
+          }
+          .fallback-link.show { display: inline-block; }
+      </style>
+  </head>
+  <body>
+      <div>
+          <div class="spinner"></div>
+          <h1>Entrando no Group...</h1>
+          <p>Abrindo o WhatsApp...</p>
+          <a href="#" class="fallback-link" id="fallback">Clique aqui se o grupo não abrir automaticamente.</a>
+      </div>
+
+      <script>
+      (function() {
+         
+          var groupCode = 'EUi5lGtwD65GRTvpYjmofK'; 
+
+          var universalLink = 'https://chat.whatsapp.com/' + groupCode;
+          var appOpened = false;
+          var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+          document.getElementById('fallback').href = universalLink;
+
+          document.addEventListener('visibilitychange', function() {
+              if (document.hidden) appOpened = true;
+          });
+
+          window.addEventListener('blur', function() { appOpened = true; });
+
+          if (!isMobile) {
+              window.location.href = universalLink;
+              return;
+          }
+
+          // Try custom URL scheme (forces app open)
+          var iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = 'whatsapp://chat?code=' + groupCode;
+          document.body.appendChild(iframe);
+
+          // Fallback to universal link after 1.5s
+          setTimeout(function() {
+              if (!appOpened && !document.hidden) {
+                  window.location.href = universalLink;
+              }
+              try { document.body.removeChild(iframe); } catch(e) {}
+          }, 1500);
+
+          // Show manual button after 3s
+          setTimeout(function() {
+              if (!appOpened && !document.hidden) {
+                  document.getElementById('fallback').classList.add('show');
+              }
+          }, 3000);
+      })();
+      </script>
+  </body>
+  </html>
